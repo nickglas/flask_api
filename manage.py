@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 
 from app import blueprint
 from app.main import create_app, db
-from app.main.model import user, todo, blacklist
+from app.main.model import user
 
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')
 app.register_blueprint(blueprint)
@@ -17,7 +17,7 @@ migrate = Migrate(app, db)
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(db=db, User=user, Blacklist=blacklist, Todo=todo)
+    return dict(db=db, User=user)
 
 @app.cli.command()
 def test():

@@ -49,7 +49,7 @@ def reinitializeDb():
     if u.fileExists('app/main/Shootsoft.db'):
         os.remove('app/main/Shootsoft.db')
 
-    runCommand(['flask db init', 'flask db migrate', 'flask db upgrade'])
+    runCommand(['flask db init', 'flask db migrate', 'flask db upgrade', 'pause'])
 
     u.printMessage('reinitializeDb action done', True)
 
@@ -69,7 +69,7 @@ def initVenv():
     if u.locationExists('venv'):
         shutil.rmtree('venv')
 
-    runCommand(['virtualenv venv','venv\\Scripts\\activate.bat','pip install -r requirements.txt', 'pause'])
+    runCommand(['python -m virtualenv venv','venv\\Scripts\\activate.bat','pip install -r requirements.txt', 'pause'])
 
     u.printMessage('Venv action done', True)
 
