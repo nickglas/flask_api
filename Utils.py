@@ -52,20 +52,10 @@ def askInput(message, inputMessage, datatype):
     return value
 
 def printMessage(message, waitForInput):
-    print(message)
+    print('\n'+message)
 
     if waitForInput:
         input("Press Enter to continue...")
 
-def getHomePath():
-    return os.path.expanduser('~')
-
-def getProjectLocation():
-    return getHomePath() + '\\PycharmProjects\\object_detection_yolo_pytorch\\yolo_V8'
-
-def projectLocationExists():
-    if os.path.exists(getHomePath() + '\\PycharmProjects\\object_detection_yolo_pytorch'):
-        return True
-    return False
 
 
