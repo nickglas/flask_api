@@ -1,22 +1,12 @@
-#### FLASK RESTX BOILER-PLATE WITH JWT BUILD ON PYTHON 3.9
+#### SHOOTSOFT FLASK PROJECT BUILD ON RESTX BOILER-PLATE WITH JWT(PYTHON 3.9)
 
-### Terminal commands
-Note: make sure you have `pip` and `virtualenv` installed.
-    To run test: flask test
+### Requirements
+In order for this application to work you will need to `pip`, `python 3.9` and a `virtual envirioment`
+The windows build uses `venv` and can be activated manually from the project root by typing `venv\Scripts\activate.bat` into a cmd prompt
 
-    To run application: flask run
+    To run application: run the start.py file or the start.bat(WINDOWS ONLY)
 
-
-Make sure to run the initial migration commands to update the database (from the venv!).
-
-    > export FLASK_APP=manage.py
-    
-    > flask db init
-
-    > flask db migrate
-
-    > flask db upgrade
-
+The flask application will start with no database. In order to create a new database you will need to follow the options inside the menu. Menu item 5 will drop the database, create a new migration and create a new database.
 
 ### Viewing the app ###
     Open the following url on your browser to view swagger documentation
