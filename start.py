@@ -1,19 +1,21 @@
-#used to manage flask related commands
+# used to manage flask related commands
 import Utils as u
 import os
 import subprocess
 import shutil
 
-#Global var to start flask on startup
+# Global var to start flask on startup
 AUTO_START_FLASK = True
 
-#set manage.py as flask app
+# set manage.py as flask app
 os.environ['FLASK_APP'] = 'manage.py'
 
-#main function to call cmd outlet commands. Accepts array of commands
+# main function to call cmd outlet commands. Accepts array of commands
+
+
 def runCommand(commands):
 
-    if commands == None or not len(commands) > 0 :
+    if commands == None or not len(commands) > 0:
         return
 
     command = 'start cmd /c "venv\\Scripts\\activate.bat'
@@ -25,22 +27,30 @@ def runCommand(commands):
 
     os.system(command)
 
-#initialized new db
+# initialized new db
+
+
 def initDb():
     runCommand(['flask db init'])
     u.printMessage('Init action done', True)
 
-#Create new migration
+# Create new migration
+
+
 def migrateDb():
     runCommand(['flask db migrate'])
     u.printMessage('Migrate action done', True)
 
-#apply newest migration
+# apply newest migration
+
+
 def upgradeDb():
     runCommand(['flask db upgrade'])
     u.printMessage('Upgrade action done', True)
 
-#Removes the migrations folder, database file, init new db, create new migration and apply
+# Removes the migrations folder, database file, init new db, create new migration and apply
+
+
 def reinitializeDb():
 
     if u.locationExists('migrations'):
@@ -49,31 +59,41 @@ def reinitializeDb():
     if u.fileExists('app/main/Shootsoft.db'):
         os.remove('app/main/Shootsoft.db')
 
-    runCommand(['flask db init', 'flask db migrate', 'flask db upgrade', 'pause'])
+    runCommand(['flask db init', 'flask db migrate',
+               'flask db upgrade', 'pause'])
 
     u.printMessage('reinitializeDb action done', True)
 
-#Starts a new flask app instance
+# Starts a new flask app instance
+
+
 def startFlaskApp():
     runCommand(['flask run'])
     u.printMessage('Flask action done', True)
 
-#Runs tests
+# Runs tests
+
+
 def testFlaskApp():
     runCommand(['flask test', 'pause'])
     u.printMessage('test action done', True)
 
-#Removes venv if exists, install new venv and installing all pip packages from requirements.txt
+# Removes venv if exists, install new venv and installing all pip packages from requirements.txt
+
+
 def initVenv():
 
     if u.locationExists('venv'):
         shutil.rmtree('venv')
 
-    runCommand(['python -m virtualenv venv','venv\\Scripts\\activate.bat','pip install -r requirements.txt', 'pause'])
+    runCommand(['python -m virtualenv venv', 'venv\\Scripts\\activate.bat',
+               'pip install -r requirements.txt', 'pause'])
 
     u.printMessage('Venv action done', True)
 
-#Menu with options
+# Menu with options
+
+
 def openMenu():
 
     u.clearScreen()
@@ -94,7 +114,7 @@ def openMenu():
 
     if choice == 1:
         initDb()
-    
+
     if choice == 2:
         migrateDb()
 
@@ -116,34 +136,54 @@ def openMenu():
     if choice == 99:
         quit()
 
-#Startup check if venv exists
+# Startup check if venv exists
+
+
 def checkVenv():
     if not u.locationExists('venv'):
         u.clearScreen()
-        char = u.askInput('Virtual envirioment not found... do you want to initialize a new virtual envirioment', 'Init new venv (Y/N): ', str)
-        if(char.upper() == 'Y'):
+        char = u.askInput(
+            'Virtual envirioment not found... do you want to initialize a new virtual envirioment', 'Init new venv (Y/N): ', str)
+        if (char.upper() == 'Y'):
             initVenv()
 
-#Startup check if db exists
+# Startup check if db exists
+
+
 def checkDB():
     if not u.fileExists('app/main/Shootsoft.db'):
         u.clearScreen()
-        char = u.askInput('database not found... do you want to initialize a new database', 'Init new database (Y/N): ', str)
-        if(char.upper() == 'Y'):
+        char = u.askInput(
+            'database not found... do you want to initialize a new database', 'Init new database (Y/N): ', str)
+        if (char.upper() == 'Y'):
             reinitializeDb()
 
-#Main loop
+
+def checkPackageInstalled():
+    try:
+        import virtualenv
+    except ImportError as e:
+        char = u.askInput(
+            'Virtual envirioment package not found...', 'Download package (Y/N): ', str)
+        if (char.upper() == 'Y'):
+            runCommand(['pip install virtualenv', 'pause'])
+
+# Main loop
+
+
 def main():
 
+    checkPackageInstalled()
     checkVenv()
     checkDB()
 
     if AUTO_START_FLASK:
-        os.system('start cmd /c "flask run"')
+        runCommand(['flask run'])
 
     while True:
         openMenu()
 
-#Call main
+
+# Call main
 if __name__ == '__main__':
     main()
