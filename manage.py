@@ -3,11 +3,12 @@ import unittest
 import datetime
 
 from flask_migrate import Migrate
+from flask.cli import with_appcontext
 
 from app import blueprint
 from app.main import create_app, db
 from app.main.model import user
-
+from app.main.model.user import User
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')
 app.register_blueprint(blueprint)
 
@@ -27,3 +28,11 @@ def test():
     if result.wasSuccessful():
         return 0
     return 1
+
+@with_appcontext
+@app.cli.command()
+def seed():
+    print("SEEDING DATABASE")
+    U1 = User(email='nickglas@hotmail.nl')
+    db.session.add(U1)
+    db.session.commit()

@@ -73,6 +73,11 @@ def initVenv():
 
     u.printMessage('Venv action done', True)
 
+#seed data into db with cli command
+def seedData():
+    runCommand(['flask seed'])
+    u.printMessage('Seed action done', True)
+
 #Menu with options
 def openMenu():
 
@@ -86,6 +91,7 @@ def openMenu():
         5. Start new flask application instance
         6. Start tests
         7. Init/Reinstall venv and scripts (windows only)
+        8. Seed database
         99. Exit/Quit
     """)
 
@@ -112,6 +118,9 @@ def openMenu():
 
     if choice == 7:
         initVenv()
+
+    if choice == 8:
+        seedData()
 
     if choice == 99:
         quit()
