@@ -11,6 +11,16 @@ class UserDto:
     })
 
 
+class DetectionDto:
+    api = Namespace('detection', description='detection related operations')
+    detection = api.model('detection', {
+        'image': fields.String(required=True, description='base 64 url of image'),
+    })
+
+
+
+
+
 class AuthDto:
     api = Namespace('auth', description='authentication related operations')
     user_auth = api.model('auth_details', {

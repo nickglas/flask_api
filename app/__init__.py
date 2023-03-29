@@ -2,6 +2,8 @@ from flask_restx import Api
 from flask import Blueprint
 
 from .main.controller.user_controller import api as user_ns
+from .main.controller.detection_controller import api as detection_ns
+
 
 blueprint = Blueprint('api', __name__)
 authorizations = {
@@ -22,3 +24,4 @@ api = Api(
 )
 
 api.add_namespace(user_ns, path='/user')
+api.add_namespace(detection_ns, path='/detection')
