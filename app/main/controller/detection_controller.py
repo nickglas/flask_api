@@ -3,7 +3,7 @@ from flask_restx import Resource
 from werkzeug.utils import secure_filename
 from PIL import Image
 from ..util.dto import DetectionDto
-from ..service.detection_service import detect_target
+from ..service.detection_service import detect_target, detect_target_boxes
 import json
 import jsonpickle
 from io import BytesIO
@@ -14,7 +14,7 @@ _detection = DetectionDto.detection
 @api.route('/')
 @api.response(404, 'User not found.')
 class Detection(Resource):
-    
+
     @api.doc('detects a target. needs base64 url as input')
     def post(self):
 
@@ -43,20 +43,14 @@ class Detection(Resource):
 
         return response
 
+@api.route('/hits')
+class DetectionCoordinates(Resource):
 
-        return result.path
+    @api.doc('detects a target. return coordinates of the target and shots')
+    def post(self):
+        file = request.files['file']
+        img = Image.open(file.stream)
+        
+        result = detect_target_boxes(img)
 
-        content_type = request.headers.get('Content-Type')
-        if (content_type == 'application/json'):
-            json = request.get_json()
-            return json['image']
-
-            return detect_target(json['image'])
-
-        else:
-            return 'Content-Type not supported!'
-
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)
-
+        return jsonify(result)

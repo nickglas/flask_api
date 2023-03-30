@@ -13,18 +13,7 @@ from PIL import Image as im
 
 def detect_target(image) -> Tuple[Dict[str, str], int]:
 
-    model = YOLO('C:\\projects\\flask_api\\runs\\detect\\train\\weights\\best.pt')
-
-    results = model.predict(source=[image], show=False, hide_labels=False, hide_conf=False, save_txt=False,
-                            save_conf=True, line_thickness=2)
-
-
-    # response_object = {
-    #     'status': 'success',
-    #     'message': 'Successfully detected target.',
-    # }
-
-    res = getScoreConfidence(results[0])
+    results, model = detect_image(image)
 
     for r in results:
         
@@ -40,6 +29,34 @@ def detect_target(image) -> Tuple[Dict[str, str], int]:
     image = annotator.result()  
 
     return im.fromarray(image)
+
+
+def detect_image(image):
+
+    #MODEL IS STILL STATIC CHANGE THIS WHEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    model = YOLO('C:\\projects\\flask_api\\runs\\detect\\train\\weights\\best.pt')
+
+    results = model.predict(source=[image], show=False, hide_labels=False, hide_conf=False, save_txt=False,
+                            save_conf=True, line_thickness=2)
+
+    return results, model
+
+
+def detect_target_boxes(image):
+
+    results, model = detect_image(image)
+    
+    coordinates = []
+
+    for r in results:
+        boxes = r.boxes
+        for box in boxes:
+            
+            b = box.xyxy[0]  # get box coordinates in (top, left, bottom, right) format
+            c = box.cls
+            coordinates.append((model.names[int(c)], int(c), b.tolist()))
+
+    return coordinates
 
 
 def getScoreConfidence(prediction):
