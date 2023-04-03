@@ -1,4 +1,3 @@
-
 from .. import db
 
 class Detection(db.Model):

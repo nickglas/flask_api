@@ -3,6 +3,7 @@ from flask import Blueprint
 
 from .main.controller.user_controller import api as user_ns
 from .main.controller.detection_controller import api as detection_ns
+from .main.controller.discipline_controller import api as discipline_ns
 
 
 blueprint = Blueprint('api', __name__)
@@ -25,3 +26,4 @@ api = Api(
 
 api.add_namespace(user_ns, path='/user')
 api.add_namespace(detection_ns, path='/detection')
+api.add_namespace(discipline_ns, path='/discipline')

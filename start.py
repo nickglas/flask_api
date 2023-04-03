@@ -16,7 +16,7 @@ def runCommand(commands):
     if commands == None or not len(commands) > 0 :
         return
 
-    command = 'start cmd /c "venv\\Scripts\\activate.bat'
+    command = 'start cmd /c "venv\\Scripts\\activate.bat & echo WORKING ON IT... '
 
     for c in commands:
         command += ' & ' + c
@@ -148,7 +148,7 @@ def main():
     checkDB()
 
     if AUTO_START_FLASK:
-        os.system('start cmd /c "flask run"')
+        runCommand(['flask run'])
 
     while True:
         openMenu()
