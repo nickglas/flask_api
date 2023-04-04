@@ -1,7 +1,7 @@
 from flask import request
 from flask_restx import Resource
 
-from ..dto.return_dto.discipline import DisciplineDto
+from ..dto.discipline import DisciplineDto
 from ..service.discipline_service import get_all_disciplines
 from typing import Dict, Tuple
 
