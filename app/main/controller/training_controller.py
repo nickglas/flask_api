@@ -6,6 +6,10 @@ from ..dto.training import TrainingDto
 api = TrainingDto.api
 
 @api.route('/')
+@api.response(200, 'Ok')
+@api.response(201, 'Created')
+@api.response(401, 'Forbidden')
+@api.response(500, 'Internal server error')
 class Training(Resource):
 
     @api.doc('list of all training')
@@ -15,4 +19,5 @@ class Training(Resource):
 
     @api.doc('Post new training')
     def post(self):
+        """Create a new training"""
         return None

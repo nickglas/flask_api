@@ -5,56 +5,91 @@
     "/authentication/": {
       "get": {
         "responses": {
-          "200": {
-            "description": "Success"
+          "201": {
+            "description": "Ok"
+          },
+          "401": {
+            "description": "Forbidden"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         },
-        "operationId": "user login",
-        "tags": ["auth"]
+        "summary": "Gets the logged in user info",
+        "operationId": "Get logged in user",
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/authentication/login": {
       "post": {
         "responses": {
-          "200": {
-            "description": "Success"
+          "201": {
+            "description": "Created"
+          },
+          "403": {
+            "description": "Unauthorized"
           }
         },
+        "summary": "Login user",
         "operationId": "user login",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/authentication/logout": {
       "post": {
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Ok"
+          },
+          "401": {
+            "description": "Forbidden"
           }
         },
+        "summary": "Logout user",
         "operationId": "user logout",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/authentication/refresh": {
       "post": {
         "responses": {
-          "200": {
-            "description": "Success"
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         },
+        "summary": "Refresh token",
         "operationId": "Refresh token",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/detection/": {
       "post": {
         "responses": {
-          "404": {
-            "description": "User not found."
+          "500": {
+            "description": "Internal server error"
           }
         },
         "operationId": "detects a target. needs base64 url as input",
-        "tags": ["detection"]
+        "tags": [
+          "detection"
+        ]
       }
     },
     "/detection/hits": {
@@ -65,7 +100,9 @@
           }
         },
         "operationId": "detects a target. return coordinates of the target and shots",
-        "tags": ["detection"]
+        "tags": [
+          "detection"
+        ]
       }
     },
     "/discipline/": {
@@ -87,55 +124,99 @@
         },
         "summary": "List all disciplines",
         "operationId": "list_of_disciplines",
-        "tags": ["discipline"]
+        "tags": [
+          "discipline"
+        ]
       }
     },
-    "/training/": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "summary": "List all training",
-        "operationId": "list of all training",
-        "tags": ["training"]
-      },
-      "post": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "operationId": "Post new training",
-        "tags": ["training"]
-      }
-    },
-    "/user/{public_id}": {
+    "/discipline/{discipline_id}": {
       "parameters": [
         {
           "in": "path",
-          "description": "The User identifier",
-          "name": "public_id",
+          "description": "The discipline identifier",
+          "name": "discipline_id",
           "required": true,
           "type": "string"
         }
       ],
       "get": {
         "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/user"
-            }
-          },
           "404": {
-            "description": "User not found."
+            "description": "Discipline not found."
           }
         },
-        "summary": "get a user given its identifier",
-        "operationId": "get a user",
-        "tags": ["user"]
+        "summary": "get a discipline given its identifier",
+        "operationId": "get a discipline by id",
+        "tags": [
+          "discipline"
+        ]
+      }
+    },
+    "/training/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "List all training",
+        "operationId": "list of all training",
+        "tags": [
+          "training"
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Create a new training",
+        "operationId": "Post new training",
+        "tags": [
+          "training"
+        ]
+      }
+    },
+    "/user/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "401": {
+            "description": "Forbidden"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "summary": "get the logged in user info",
+        "operationId": "get logged in user info",
+        "tags": [
+          "user"
+        ]
       }
     }
   },
@@ -144,8 +225,12 @@
     "version": "1.0",
     "description": "a boilerplate for flask restplus (restx) web service"
   },
-  "produces": ["application/json"],
-  "consumes": ["application/json"],
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
   "securityDefinitions": {
     "apikey": {
       "type": "apiKey",
@@ -165,7 +250,7 @@
     },
     {
       "name": "detection",
-      "description": "detection related operations"
+      "description": "detection related operations(This route is for development/test purposes)"
     },
     {
       "name": "discipline",
@@ -181,30 +266,10 @@
     }
   ],
   "definitions": {
-    "user": {
-      "required": ["email", "password", "username"],
-      "properties": {
-        "email": {
-          "type": "string",
-          "description": "user email address"
-        },
-        "username": {
-          "type": "string",
-          "description": "user username"
-        },
-        "password": {
-          "type": "string",
-          "description": "user password"
-        },
-        "public_id": {
-          "type": "string",
-          "description": "user Identifier"
-        }
-      },
-      "type": "object"
-    },
     "discipline": {
-      "required": ["title"],
+      "required": [
+        "title"
+      ],
       "properties": {
         "title": {
           "type": "string",

@@ -12,9 +12,9 @@ api = DetectionDto.api
 _detection = DetectionDto.detection
 
 @api.route('/')
-@api.response(404, 'User not found.')
+@api.response(500, 'Internal server error')
 class Detection(Resource):
-
+    """This route is for development/test purposes"""
     @api.doc('detects a target. needs base64 url as input')
     def post(self):
 

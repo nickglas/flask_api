@@ -12,7 +12,7 @@ class UserDto:
 
 
 class DetectionDto:
-    api = Namespace('detection', description='detection related operations')
+    api = Namespace('detection', description='detection related operations(This route is for development/test purposes)')
     detection = api.model('detection', {
         'image': fields.String(required=True, description='base 64 url of image'),
     })

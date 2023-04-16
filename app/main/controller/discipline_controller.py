@@ -15,3 +15,14 @@ class DisciplineList(Resource):
     def get(self):
         """List all disciplines"""
         return get_all_disciplines()
+    
+
+@api.route('/<discipline_id>')
+@api.param('discipline_id', 'The discipline identifier')
+@api.response(404, 'Discipline not found.')
+class User(Resource):
+    @api.doc('get a discipline by id')
+    def get(self, public_id):
+        """get a discipline given its identifier"""
+        api.abort(404)
+       
