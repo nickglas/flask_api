@@ -21,7 +21,7 @@ def runCommand(commands):
     for c in commands:
         command += ' & ' + c
 
-    command += '& pause"'
+    command += '& pause & Exit /b"'
 
     os.system(command)
 
