@@ -5,6 +5,7 @@ from ultralytics import YOLO
 import cv2
 import base64
 from ultralytics.yolo.utils.plotting import Annotator
+import json
 
 from app.main import db
 from app.main.model.detection import Detection
@@ -16,9 +17,8 @@ def detect_target(image) -> Tuple[Dict[str, str], int]:
     results, model = detect_image(image)
 
     for r in results:
-        
         annotator = Annotator(np.ascontiguousarray(image))
-        
+
         boxes = r.boxes
         for box in boxes:
             
@@ -28,7 +28,7 @@ def detect_target(image) -> Tuple[Dict[str, str], int]:
  
     image = annotator.result()  
 
-    return im.fromarray(image)
+    return getShotScore(results[0]), im.fromarray(image)
 
 
 def detect_image(image):
@@ -58,6 +58,20 @@ def detect_target_boxes(image):
 
     return coordinates
 
+def getShotScore(prediction):
+    results = []
+    classes = prediction.names
+
+    for box in prediction.boxes:
+        conf = box.conf.numpy()[0]
+        shotClass = classes[int(box.cls.numpy()[0])]
+
+        if shotClass == 'Target' or shotClass == 'black_contour':
+            continue
+
+        results.append(ShotResult(shotClass, conf))
+
+    return results
 
 def getScoreConfidence(prediction):
 
@@ -97,11 +111,11 @@ class ShotResult:
 
     def __init__(self, label, confidence):
         self.label = label
-        self.confidence = confidence
+        # self.confidence = confidence
 
         for x in range(11):
 
-            if label == 'Bullet_'+str(x):
+            if label == str(x):
                 self.score = x
 
 

@@ -1,9 +1,11 @@
-from flask import request
+from flask import request, jsonify
 from flask_restx import Resource
+from ..service.training_service import create
 
 from ..dto.training import TrainingDto
 
 api = TrainingDto.api
+_training = TrainingDto.training
 
 @api.route('/')
 @api.response(200, 'Ok')
@@ -18,6 +20,10 @@ class Training(Resource):
         return None
 
     @api.doc('Post new training')
+    @api.expect(_training, validate=True)
+    @api.marshal_with(_training, code=201)
     def post(self):
         """Create a new training"""
-        return None
+        data = create(request.json)
+        return jsonify(data)
+    

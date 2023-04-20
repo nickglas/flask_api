@@ -10,6 +10,8 @@ from app.main import create_app, db
 from app.main.model import user
 from app.main.model.user import User
 from app.main.model.discipline import Discipline
+from app.main.model.training import Training
+
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')
 app.register_blueprint(blueprint)
 
@@ -19,7 +21,7 @@ migrate = Migrate(app, db)
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(db=db, User=user, Discipline=Discipline)
+    return dict(db=db, User=user, Discipline=Discipline, Training=Training)
 
 @app.cli.command()
 def test():

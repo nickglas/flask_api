@@ -24,3 +24,16 @@ class AuthDto:
         'email': fields.String(required=True, description='The email address'),
         'password': fields.String(required=True, description='The user password '),
     })
+
+class TrainingDto:
+    api = Namespace('training', description='training related operations')
+    training = api.model('training', {
+        'title': fields.String(required=True, description='training title'),
+    })
+
+class CardDto:
+    api = Namespace('card', description='card related operations')
+    card = api.model('card', {
+        'title': fields.String(required=True, description='card title'),
+        'img' : fields.String(required=False, description='card title')
+    })
