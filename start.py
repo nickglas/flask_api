@@ -55,7 +55,7 @@ def reinitializeDb():
 
 #Starts a new flask app instance
 def startFlaskApp():
-    runCommand(['flask run'])
+    runCommand(['flask run --host=0.0.0.0'])
     u.printMessage('Flask action done', True)
 
 #Runs tests
@@ -148,7 +148,7 @@ def main():
     checkDB()
 
     if AUTO_START_FLASK:
-        runCommand(['flask run'])
+        runCommand(['flask run --host=0.0.0.0'])
 
     while True:
         openMenu()
