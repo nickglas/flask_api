@@ -1,8 +1,8 @@
 task: detect
 mode: train
-model: yolov8n.pt
-data: /home/jaimy/PycharmProjects/object_detection_yolo_pytorch/yolo_V8/model_data/data.yaml
-epochs: 90
+model: C:\Users\nebur\PycharmProjects\object_detection_yolo_pytorch\yolo_V8\yolov8n.pt
+data: C:\Users\nebur\PycharmProjects\object_detection_yolo_pytorch\yolo_V8\model_data\data.yaml
+epochs: 100
 patience: 50
 batch: 16
 imgsz: 640
@@ -92,4 +92,4 @@ copy_paste: 0.0
 cfg: null
 v5loader: false
 tracker: botsort.yaml
-save_dir: runs/detect/train
+save_dir: runs\detect\train

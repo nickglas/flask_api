@@ -31,6 +31,67 @@ def detect_target(image) -> Tuple[Dict[str, str], int]:
     return getShotScore(results[0]), im.fromarray(image)
 
 
+
+def detect_target_image(image) -> Tuple[Dict[str, str], int]:
+    results, model = detect_image(image)
+
+    for r in results:
+        
+        annotator = Annotator(np.ascontiguousarray(image), font='Arial.ttf')
+        
+        boxes = r.boxes
+        for box in boxes:
+
+            b = box.xyxy[0]  # get box coordinates in (top, left, bottom, right) format
+            c = box.cls
+
+            if box.conf.numpy()[0] < 0.4:
+                continue
+
+            name = model.names[int(c)]
+
+            #filters out the black contour to keep the image clean
+            if name != 'black_contour':
+                color_code = get_color_code(name)
+                annotator.box_label(b, name, color=color_code)
+            
+ 
+    image = annotator.result()  
+
+    return im.fromarray(image)
+
+def get_color_code(name):
+    if name == '10':
+        return (0, 0, 255)
+    elif name == '9':
+        return (0, 255, 0)
+    elif name == '8':
+        return (255, 0, 0)
+    elif name == '7':
+        return (0, 255, 255)
+    elif name == '6':
+        return (255, 0, 255)
+    elif name == '5':
+        return (255, 255, 0)
+    elif name == '4':
+        return (0, 0, 128)
+    elif name == '3':
+        return (0, 128, 0)
+    elif name == '2':
+        return (128, 0, 0)
+    elif name == '1':
+        return (0, 128, 128)
+    elif name == '0':
+        return (128, 0, 128)
+    elif name == 'Target':
+        return (0, 200, 200)
+    else:
+        return (0, 0, 0)
+
+
+
+
+
 def detect_image(image):
 
     #MODEL IS STILL STATIC CHANGE THIS WHEEEEEEEEEEEEEEEEEEEEEEEEEEEE
@@ -51,10 +112,14 @@ def detect_target_boxes(image):
     for r in results:
         boxes = r.boxes
         for box in boxes:
+            conf = box.conf.numpy()[0]
             
+            if box.conf.numpy()[0] < 0.4:
+                continue
+
             b = box.xyxy[0]  # get box coordinates in (top, left, bottom, right) format
             c = box.cls
-            coordinates.append((model.names[int(c)], int(c), b.tolist()))
+            coordinates.append((model.names[int(c)], int(c), b.tolist(), str(conf)))
 
     return coordinates
 
