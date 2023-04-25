@@ -1,0 +1,5 @@
+Alpine gaat fout op dependencies dus debian gebruiken.
+
+De eerste import die niet zeikt op de dependencies
+https://github.com/tiangolo/uwsgi-nginx-flask-docker/blob/master/docker-images/python3.10.dockerfile
+https://hub.docker.com/r/tiangolo/uwsgi-nginx-flask/
