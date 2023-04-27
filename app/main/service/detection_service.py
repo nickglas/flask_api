@@ -1,5 +1,6 @@
 import uuid
 import datetime
+from flask import url_for
 import numpy as np
 from ultralytics import YOLO
 import cv2
@@ -33,6 +34,13 @@ def detect_target(image) -> Tuple[Dict[str, str], int]:
 
 
 def detect_target_image(image) -> Tuple[Dict[str, str], int]:
+
+    # image = np.asarray(image)
+
+    # image = cv2.resize(image, (1008, 1008), interpolation=cv2.INTER_AREA)
+
+    # image = im.fromarray(image)
+
     results, model = detect_image(image)
 
     for r in results:
@@ -95,7 +103,7 @@ def get_color_code(name):
 def detect_image(image):
 
     #MODEL IS STILL STATIC CHANGE THIS WHEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    model = YOLO('C:\\projects\\flask_api\\runs\\detect\\train\\weights\\best.pt')
+    model = YOLO('runs/detect/train/weights/best.pt')
 
     results = model.predict(source=[image], show=False, hide_labels=False, hide_conf=False, save_txt=False,
                             save_conf=True, line_thickness=2)
@@ -104,6 +112,12 @@ def detect_image(image):
 
 
 def detect_target_boxes(image):
+
+    # image = np.asarray(image)
+
+    # image = cv2.resize(image, (1008, 1008), interpolation=cv2.INTER_AREA)
+
+    # image = im.fromarray(image)
 
     results, model = detect_image(image)
     
