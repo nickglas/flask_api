@@ -3,7 +3,7 @@ from flask_restx import Resource
 from werkzeug.utils import secure_filename
 from PIL import Image
 from ..util.dto import DetectionDto
-from ..service.detection_service import detect_target, detect_target_boxes, detect_target_image
+from ..service.detection_service import detect_target, detect_target_image_cropping, detect_target_boxes, detect_target_image
 import json
 import jsonpickle
 from io import BytesIO
@@ -156,3 +156,35 @@ class DetectionCoordinates(Resource):
 
 
 
+@api.route('/detectcropping')
+@api.response(500, 'Internal server error')
+class Detection(Resource):
+    """This route is for development/test purposes"""
+    @api.doc('detects a target. needs file as input')
+    @cross_origin()
+    def post(self):
+
+        
+            file = request.files['file']
+            img = Image.open(file.stream)
+            
+            result = detect_target_image_cropping(img)
+
+            #return jsonify(jsonpickle.encode(result))
+        
+            # response = make_response(result.tobytes())
+            # response.headers.set('Content-Type', 'image/jpeg')
+
+
+            buffer = BytesIO()
+
+            # Save the image to the byte buffer in JPEG format
+            result.save(buffer, format='JPEG')
+
+            # Create a response object from the byte buffer data
+            response = make_response(buffer.getvalue())
+
+            # Set the content type to JPEG image
+            response.headers.set('Content-Type', 'image/jpeg')
+
+            return response

@@ -37,7 +37,7 @@ def detect_target_image(image) -> Tuple[Dict[str, str], int]:
 
     # image = np.asarray(image)
 
-    # image = cv2.resize(image, (1008, 1008), interpolation=cv2.INTER_AREA)
+    # image = cv2.resize(image, (640, 640), interpolation=cv2.INTER_AREA)
 
     # image = im.fromarray(image)
 
@@ -115,7 +115,7 @@ def detect_target_boxes(image):
 
     # image = np.asarray(image)
 
-    # image = cv2.resize(image, (1008, 1008), interpolation=cv2.INTER_AREA)
+    # image = cv2.resize(image, (640, 640), interpolation=cv2.INTER_AREA)
 
     # image = im.fromarray(image)
 
@@ -202,3 +202,55 @@ def save_changes(data: Detection) -> None:
     db.session.add(data)
     db.session.commit()
 
+
+def detect_target_image_cropping(image) -> Tuple[Dict[str, str], int]:
+
+    results, model = detect_image(image)
+
+    for r in results:
+        
+        annotator = Annotator(np.ascontiguousarray(image), font='Arial.ttf')
+        
+        boxes = r.boxes
+        for box in boxes:
+
+            b = box.xyxy[0]  # get box coordinates in (top, left, bottom, right) format
+            c = box.cls
+
+            if model.names[int(c)] == 'Target':
+
+                image = annotator.result()
+
+                original_image = im.fromarray(image)
+
+                cropping = (int(b[0]), int(b[1]), int(b[2]), int(b[3]))
+                
+                image = original_image.crop(cropping)
+
+    coordinates = detect_target_boxes(image)
+
+    annotator = Annotator(np.ascontiguousarray(original_image), font='Arial.ttf')
+
+    for coordinate in coordinates:
+        coordinate[2][0] += cropping[0]
+        coordinate[2][1] += cropping[1]
+        coordinate[2][2] += cropping[0]
+        coordinate[2][3] += cropping[1]
+
+
+        name = coordinate[0]
+
+        if float(coordinate[3]) < 0.4:
+            continue
+
+        #filters out the black contour to keep the image clean
+        if name != 'black_contour' and name != 'Target':
+            color_code = get_color_code(name)
+            annotator.box_label(coordinate[2], name, color=color_code)
+
+    annotator.box_label(cropping, 'Target', get_color_code('Target'))
+
+      
+    image = annotator.result()  
+
+    return im.fromarray(image)
