@@ -135,10 +135,12 @@ def detect_target_boxes(image):
     # image = im.fromarray(image)
 
     results, model = detect_image(image)
+
     
     coordinates = []
 
     for r in results:
+                
         boxes = r.boxes
         for box in boxes:
             conf = box.conf.numpy()[0]
@@ -345,6 +347,10 @@ def detect_target_single_image_cropping(image) -> shootingCard:
 
     results, model = detect_image(image)
 
+    #array of scores
+    scores = []
+
+    #technically should be only one result
     for r in results:
         
         #makes sure to crop target with highest conf
@@ -358,14 +364,20 @@ def detect_target_single_image_cropping(image) -> shootingCard:
 
             b = box.xyxy[0]  # get box coordinates in (top, left, bottom, right) format
             c = box.cls
+            confidence = box.conf.numpy()[0]
+
+            #zeros are added here since it will not be wise to detect these when target is cropped
+            if model.names[int(c)] == '0':
+                scores.append(shootingScore(model.names[int(c)], int(c), b.tolist(), str(confidence)))
+
 
             if model.names[int(c)] == 'Target':
 
                 #check to see if the confidence is higher than the previous one
-                if box.conf.numpy()[0] < highest_target_confidence:
+                if confidence < highest_target_confidence:
                     continue
 
-                highest_target_confidence = box.conf.numpy()[0]
+                highest_target_confidence = confidence
 
                 image = annotator.result()
 
@@ -383,9 +395,8 @@ def detect_target_single_image_cropping(image) -> shootingCard:
     #SECOND DETECTION FOR SCORES
     coordinates = detect_target_boxes(image)
 
-    scores = []
     
-    for coordinate in coordinates:
+    for x, coordinate in enumerate(coordinates):
         coordinate[2][0] += cropping[0]
         coordinate[2][1] += cropping[1]
         coordinate[2][2] += cropping[0]
@@ -394,6 +405,7 @@ def detect_target_single_image_cropping(image) -> shootingCard:
 
         name = coordinate[0]
 
+        #checks for condfidence higher then 0.4
         if float(coordinate[3]) < 0.4:
             continue
         
@@ -401,8 +413,36 @@ def detect_target_single_image_cropping(image) -> shootingCard:
 
         #filters out the black contour to keep the image clean
         if name != 'black_contour' and name != 'Target':
+
+            removal = False
+
+            #piece of code to check for overlapping detections
+            for y, compare_coordinate in enumerate(coordinates):
+                
+                #does not compare against target or black contour
+                if compare_coordinate[0] == 'black_contour' or  compare_coordinate[0] == 'Target':
+                    continue
+                
+                #does not compare against itself
+                if y == x:
+                    continue
+
+                #checks if the coordinates are within the same area
+                if check_overlap(coordinate[2], compare_coordinate[2]):
+                    removal = True
+                    break
+
+            #removes the detection if overlapping is to much and does not annotate it.
+            if removal:
+                scores.pop()
+    
+    #final annotation after filtering
+    for score in scores:
+        name = score.score
+        if name != 'black_contour' and name != 'Target':
             color_code = get_color_code(name)
-            annotator.box_label(coordinate[2], name, color=color_code)
+            annotator.box_label(score.location, name, color=color_code)
+    
 
     #annotates the target from the original cropping so that it is not covered by the other annotations 
     annotator.box_label(cropping, 'Target', get_color_code('Target'))
@@ -413,3 +453,15 @@ def detect_target_single_image_cropping(image) -> shootingCard:
     shooting_card = shootingCard(convert_to_base64(image), scores)
     
     return shooting_card
+
+def check_overlap(box1, box2):
+    area1 = (box1[2] - box1[0]) * (box1[3] - box1[1])
+    area2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
+    x_overlap = max(0, min(box1[2], box2[2]) - max(box1[0], box2[0]))
+    y_overlap = max(0, min(box1[3], box2[3]) - max(box1[1], box2[1]))
+    intersection = x_overlap * y_overlap
+    overlap_ratio = intersection / min(area1, area2)
+    if overlap_ratio > 0.7:
+        return True
+    else:
+        return False

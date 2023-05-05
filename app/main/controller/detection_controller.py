@@ -77,6 +77,7 @@ class Detection(Resource):
 class Detection(Resource):
     """This route is for development/test purposes"""
     @api.doc('detects a target. needs base64 url as input')
+    @cross_origin()
     def post(self):
             file = request.files['file']
             img = Image.open(file.stream)
@@ -104,6 +105,7 @@ class Detection(Resource):
 class Detection(Resource):
     """This route is for development/test purposes"""
     @api.doc('detects a target. needs base64 url as input')
+    @cross_origin()
     def post(self):
             
             print('ran')
@@ -167,6 +169,7 @@ class DetectionCoordinates(Resource):
 class DetectionMultipleCropping(Resource):
     """This route is for development/test purposes"""
     @api.doc('Detects multiple images needs formdata files as input')
+    @cross_origin()
     def post(self):
             
             print('ran')
@@ -219,6 +222,7 @@ class multiThreading:
 class DetectionMultipleAsync(Resource):
     """This route is for development/test purposes"""
     @api.doc('Needs a list of files as input. Detects each image on different thread and returns as proper json')
+    @cross_origin()
     def post(self):
             
             print('ran')
@@ -265,6 +269,7 @@ class multiThreadingCropping:
 class DetectionMultipleCroppingAsync(Resource):
     """This route is for development/test purposes"""
     @api.doc('Needs a list of files as input. Detects each image on different thread and returns as python list')
+    @cross_origin()
     def post(self):
             
             print('ran')
@@ -277,13 +282,7 @@ class DetectionMultipleCroppingAsync(Resource):
                 filetype = img.format
 
                 if filetype == 'PNG':
-                    # Create a new filename for the JPEG image
                     rgb_image = img.convert('RGB')
-
-                    new_filename = os.path.splitext('myimage.png')[0] + '.jpg'
-
-                    # Save the image in JPEG format
-                    rgb_image.save(new_filename, 'JPEG')
                     pil_images.append(rgb_image)
                     continue
 
