@@ -1,5 +1,5 @@
 import os
-from flask import Flask, make_response, request, send_file, jsonify
+from flask import Flask, Response, make_response, request, send_file, jsonify
 from flask_restx import Resource
 from werkzeug.utils import secure_filename
 from PIL import Image
@@ -300,3 +300,33 @@ class DetectionMultipleCroppingAsync(Resource):
             response.headers.set('Content-Type', 'application/json')
 
             return response
+    
+@api.route('/detectsinglecroppingasync')
+@api.response(500, 'Internal server error')
+class DetectionSingleCroppingAsync(Resource):
+    """This route is for development/test purposes"""
+    @api.doc('Needs a single file as input. Detects a single image')
+    @cross_origin()
+    def post(self):
+            
+            file = request.files['file']
+            filetype = file.mimetype
+
+            if filetype == 'image/jpeg':
+                img = Image.open(file.stream)
+                result = detect_target_single_image_cropping(img)
+            elif filetype == 'image/png':
+                img = Image.open(file.stream)
+                rgb_image = img.convert('RGB')
+                result = detect_target_single_image_cropping(rgb_image)
+            else:
+                return Response("{\"message\":\"Incorrect filetype\"}", status=400, mimetype='application/json')
+
+            # Create a JSON response with the base64 encoded image data
+            response = make_response(result.toJSON())
+
+            # Set the content type to application/json
+            response.headers.set('Content-Type', 'application/json')
+
+            return response
+
