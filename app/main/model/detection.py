@@ -1,5 +1,6 @@
 from .. import db
 import json
+import uuid
 
 class Detection(db.Model):
     """ Detection Model for storing detection related details """
@@ -38,6 +39,8 @@ class shootingCard:
 class shootingScore:
          
         def __init__(self, score, classification, location, confidence) -> None:
+            #this isn't disgusting at all
+            self.id = int(str(uuid.uuid4().fields[-1])[:10])
             self.score = score
             self.classification = classification
             self.location = location
