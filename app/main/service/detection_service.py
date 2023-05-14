@@ -141,7 +141,7 @@ def convert_results_to_coordinates(results, model):
     
                 b = box.xyxy[0]  # get box coordinates in (top, left, bottom, right) format
                 c = box.cls
-                coordinates.append((model.names[int(c)], int(c), b.tolist(), str(conf)))
+                coordinates.append((model.names[int(c)], int(c), list(map(int, b.tolist())), str(conf)))
     
         return coordinates
 
@@ -413,6 +413,57 @@ def detect_target_and_null_scores(result, model, image, scores, annotator):
     return original_image, cropping, scores, highest_target_confidence, annotator
 
 
+def fill_2d_array_and_scores(coordinates, cropping, cropping_detection, overlap_2d_array, distinct_areas, scores):
+        for x, coordinate in enumerate(coordinates):
+
+            #this converts the detected coordinates from the cropping image to the original image
+            if cropping_detection:
+                coordinate[2][0] += int(cropping[0])
+                coordinate[2][1] += int(cropping[1])
+                coordinate[2][2] += int(cropping[0])
+                coordinate[2][3] += int(cropping[1])
+
+            name = coordinate[0]
+
+            #checks for condfidence higher then 0.4
+            if float(coordinate[3]) < 0.4:
+                continue
+            
+            newScore = shootingScore(*coordinate)
+
+            scores.append(newScore)
+
+            #ignore black contour and target for comparison
+            if name != 'black_contour' and name != 'Target':
+
+                #piece of code to check for overlapping detections
+                for y, compare_coordinate in enumerate(coordinates):
+                            
+                    #does not compare against target or black contour
+                    if compare_coordinate[0] == 'black_contour' or  compare_coordinate[0] == 'Target':
+                        continue
+
+                    #checks for condfidence higher then 0.4
+                    if float(compare_coordinate[3]) < 0.4:
+                        continue
+                    
+                    #does not compare against itself
+                    if y == x:
+                        continue
+
+                    overlap_percentage, detection_size = check_overlap(coordinate[2], compare_coordinate[2])
+                    
+                    #saves the overlap perecentage, the detected size and the id of the score and the compared y
+                    overlap_2d_array.append((overlap_percentage, detection_size, newScore.id, y, x))
+
+                    #adds the detection size to the distinct areas
+                    distinct_areas.add(detection_size)
+        
+        #converts 2d array to numpy array
+        overlap_2d_array = np.array(overlap_2d_array)
+
+        return overlap_2d_array, distinct_areas, scores
+
 #takes a single PIL and returns shootingCard class with base64 image and scores
 def detect_target_single_image_cropping(image) -> shootingCard:
 
@@ -441,6 +492,9 @@ def detect_target_single_image_cropping(image) -> shootingCard:
     cropping_height = cropping[3] - cropping[1]
 
     cropping_detection = False
+
+
+    #if either the width or height of is smaller then 97% of the original image then do not detect again with crop
     if image.size[0] * 0.97 < cropping_width or image.size[1] * 0.97 < cropping_height:
         coordinates = convert_results_to_coordinates(results, model)
     else:
@@ -454,69 +508,12 @@ def detect_target_single_image_cropping(image) -> shootingCard:
     #adds all the distinct areas from the bulletholes for overlapping later
     distinct_areas = set()
     
-    for x, coordinate in enumerate(coordinates):
-
-        #this converts the detected coordinates from the cropping image to the original image
-        if cropping_detection:
-            coordinate[2][0] += cropping[0]
-            coordinate[2][1] += cropping[1]
-            coordinate[2][2] += cropping[0]
-            coordinate[2][3] += cropping[1]
-
-        coordinate[2][0] = int(coordinate[2][0])
-        coordinate[2][1] = int(coordinate[2][1])
-        coordinate[2][2] = int(coordinate[2][2])
-        coordinate[2][3] = int(coordinate[2][3])
-
-        name = coordinate[0]
-
-        #checks for condfidence higher then 0.4
-        if float(coordinate[3]) < 0.4:
-            continue
-        
-        newScore = shootingScore(*coordinate)
-
-        scores.append(newScore)
-
-
-
-        #ignore black contour and target for comparison
-        if name != 'black_contour' and name != 'Target':
-
-            #piece of code to check for overlapping detections
-            for y, compare_coordinate in enumerate(coordinates):
-
-                compare_coordinate[2][0] = int(compare_coordinate[2][0])
-                compare_coordinate[2][1] = int(compare_coordinate[2][1])
-                compare_coordinate[2][2] = int(compare_coordinate[2][2])
-                compare_coordinate[2][3] = int(compare_coordinate[2][3])
-                        
-                #does not compare against target or black contour
-                if compare_coordinate[0] == 'black_contour' or  compare_coordinate[0] == 'Target':
-                    continue
-
-                #checks for condfidence higher then 0.4
-                if float(compare_coordinate[3]) < 0.4:
-                    continue
-                
-                #does not compare against itself
-                if y == x:
-                    continue
-
-                overlap_percentage, detection_size = check_overlap(coordinate[2], compare_coordinate[2])
-                
-                #saves the overlap perecentage, the detected size and the id of the score and the compared y
-                overlap_2d_array.append((overlap_percentage, detection_size, newScore.id, y, x))
-
-                #adds the detection size to the distinct areas
-                distinct_areas.add(detection_size)
-
-
-    #converts 2d array to numpy array
-    overlap_2d_array = np.array(overlap_2d_array)
+    #fills the 2d array with overlap percentages and the distinct areas
+    overlap_2d_array, distinct_areas, scores = fill_2d_array_and_scores(coordinates, cropping, cropping_detection, overlap_2d_array, distinct_areas, scores)
 
     #filters out overlapping detections
-    scores = filter_overlapping(overlap_2d_array, distinct_areas, scores)
+    if len(overlap_2d_array) > 0:
+        scores = filter_overlapping(overlap_2d_array, distinct_areas, scores)
 
     #final annotation after filtering
     for score in scores:
