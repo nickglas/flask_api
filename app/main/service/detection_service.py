@@ -341,7 +341,6 @@ def detect_target_image_cropping(pil_images) -> Tuple[Dict[str, str], int]:
 
 #filters the overlapping detections
 def filter_overlapping(overlap_2d_array, distinct_areas, scores):
-    print(overlap_2d_array)
     #while the highest overlapping is more then 0.7 keep removing the highest overlapping
     while np.max(overlap_2d_array[:, 0]) > 0.7:
         current_removal = [0, 0, 0, 0]
@@ -354,7 +353,6 @@ def filter_overlapping(overlap_2d_array, distinct_areas, scores):
             biggest_overlap = result[max_index]
             if biggest_overlap[0] > 0.7 and biggest_overlap[1] > current_removal[1]:
                 current_removal = biggest_overlap
-        print(current_removal)
         removal_item = int(current_removal[3])
 
         #removes all items with the index of removal item
@@ -438,8 +436,7 @@ def detect_target_single_image_cropping(image) -> shootingCard:
     image = original_image
 
     #SECOND DETECTION FOR SCORES
-    print(cropping)
-    print(image.size)
+
     cropping_width = cropping[2] - cropping[0]
     cropping_height = cropping[3] - cropping[1]
 
@@ -514,7 +511,6 @@ def detect_target_single_image_cropping(image) -> shootingCard:
                 #adds the detection size to the distinct areas
                 distinct_areas.add(detection_size)
 
-    print("test")
 
     #converts 2d array to numpy array
     overlap_2d_array = np.array(overlap_2d_array)
