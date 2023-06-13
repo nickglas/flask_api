@@ -381,8 +381,14 @@ def check_overlap(box1, box2):
     return overlap_ratio, area2
 
 def detect_target_and_null_scores(result, model, image, scores, annotator):
+
+    input_image = image
+
+
         #makes sure to crop target with highest conf
     highest_target_confidence = 0
+
+    original_image = False
         
     boxes = result.boxes
 
@@ -409,6 +415,13 @@ def detect_target_and_null_scores(result, model, image, scores, annotator):
             original_image = im.fromarray(image)
 
             cropping = (int(b[0]), int(b[1]), int(b[2]), int(b[3]))
+    
+    if not original_image:
+        original_image = input_image
+        cropping = (0, 0, 0, 0)
+        highest_target_confidence = 0
+        annotator = 0
+        
     
     return original_image, cropping, scores, highest_target_confidence, annotator
 
@@ -479,10 +492,10 @@ def detect_target_single_image_cropping(image) -> shootingCard:
     original_image, cropping, scores, highest_target_confidence, annotator = detect_target_and_null_scores(results[0], model, image, scores, annotator)
 
     #IF NO TARGET IS FOUND RETURN THE IMAGE
-    if highest_target_confidence == 0:
+    if cropping == (0, 0, 0, 0):
         return shootingCard(convert_to_base64(image), [])
     
-    
+
     #CROP THE IMAGE FOR BETTER DETECTION
     image = original_image
 
