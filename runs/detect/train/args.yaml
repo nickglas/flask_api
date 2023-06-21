@@ -1,6 +1,6 @@
 task: detect
 mode: train
-model: C:\Users\nebur\PycharmProjects\object_detection_yolo_pytorch\yolo_V8\yolov8n.pt
+model: C:\Users\nebur\PycharmProjects\object_detection_yolo_pytorch\yolo_V8\yolov8s.pt
 data: C:\Users\nebur\PycharmProjects\object_detection_yolo_pytorch\yolo_V8\model_data\data.yaml
 epochs: 100
 patience: 50

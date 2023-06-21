@@ -1,4 +1,6 @@
 from .. import db
+import json
+import uuid
 
 class Detection(db.Model):
     """ Detection Model for storing detection related details """
@@ -9,3 +11,38 @@ class Detection(db.Model):
 
     def __repr__(self):
         return "<Detection '{}'>".format(self.detection)
+    
+
+
+
+# Nieuwe test classes voor de nieuwe detectie
+class shootingResult:
+    def __init__(self) -> None:
+        self.shootingCards = []
+    
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=False, indent=4)
+
+class shootingCard:
+
+    def __init__(self, url, scores) -> None:
+        self.url = url
+        self.scores = scores
+    
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=False, indent=4)
+
+
+
+class shootingScore:
+         
+        def __init__(self, score, classification, location, confidence) -> None:
+            #this isn't disgusting at all
+            self.id = int(str(uuid.uuid4().fields[-1])[:10])
+            self.score = score
+            self.classification = classification
+            self.location = location
+            self.confidence = confidence
+
