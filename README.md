@@ -1,12 +1,45 @@
-#### SHOOTSOFT FLASK PROJECT BUILD ON RESTX BOILER-PLATE WITH JWT(PYTHON 3.9)
+#### SHOOTSOFT FLASK PROJECT BUILD ON RESTX BOILER-PLATE WITH JWT(PYTHON 3.10)
 
 ### Requirements
-In order for this application to work you will need to `pip`, `python 3.9` and a `virtual envirioment`
-The windows build uses `venv` and can be activated manually from the project root by typing `venv\Scripts\activate.bat` into a cmd prompt
+In order for this application to work you will need to have `pip`, `python 3.10` and a `virtual envirioment` installed.
+
+[Python 3.10](https://www.python.org/downloads/release/python-3100/)<br />
+[virtual envirioment (venv)](https://docs.python.org/3/library/venv.html)
+
+
+### Automatic installer
+The windows build uses `venv` and can be activated manually from the project root by typing `venv\Scripts\activate.bat` into a cmd prompt or run start.py
 
     To run application: run the start.py file or the start.bat(WINDOWS ONLY)
 
 The flask application will start with no database. In order to create a new database you will need to follow the options inside the menu. Menu item 5 will drop the database, create a new migration and create a new database.
+
+### Manual installer
+If the automatic installer is not working, then follow these steps to manually install the required packages. Please execute these commands in order.
+
+Initialize new virtual envirionment
+```shell script
+python -m virtualenv venv
+```
+A new virtual envirionment will be created and a folder called 'venv' will be created in the root folder <br /><br />
+
+Activate the new virtual envirionment
+```shell script
+venv\Scripts\activate.bat
+```
+The new virtual envirionment will be activated<br /><br />
+
+Installing required packages
+```shell script
+pip install -r requirements.txt
+```
+Packages will be installed into the new virtual envirionment<br /><br />
+
+### Starting the app
+In order to start the application, either start it with the start.bat file or run the start.py with the following command.
+```shell script
+python start.py
+```
 
 ### Viewing the app ###
     Open the following url on your browser to view swagger documentation
